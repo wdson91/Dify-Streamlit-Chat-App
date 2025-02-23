@@ -1,0 +1,42 @@
+{
+    "chat_id": "6b263abe-a719-4d93-b39a-128f0906ec9a",
+    "messages": [
+        {
+            "role": "assistant",
+            "content": "Sou um assistente virtual especializado em agendamentos de reuniões na empresa XYZ. Estou aqui para ajudá-lo a gerenciar seus compromissos de forma eficiente, agendando, reagendando, listando ou cancelando reuniões conforme a sua necessidade. Se tiver alguma dúvida ou precisar de assistência, é só me avisar!"
+        },
+        {
+            "role": "user",
+            "content": "oi meu nome é joao"
+        },
+        {
+            "role": "assistant",
+            "content": "Olá, João! Como posso ajudar você hoje? Se precisar de algo, é só avisar!"
+        },
+        {
+            "role": "user",
+            "content": "qual meu nome?"
+        },
+        {
+            "role": "assistant",
+            "content": "Seu nome é wdson. Como posso ajudá-lo hoje? Se precisar de ajuda, estou aqui!"
+        },
+        {
+            "role": "user",
+            "content": "qual meu nome?"
+        },
+        {
+            "role": "assistant",
+            "content": "Seu nome é Teste. Como posso ajudá-lo hoje? Se precisar de algo, é só avisar!"
+        },
+        {
+            "role": "user",
+            "content": "oi"
+        },
+        {
+            "role": "assistant",
+            "content": "Olá! Como posso ajudar você hoje?"
+        }
+    ],
+    "session_id": "744f190e-7623-4298-be00-dd38ea6f9a04"
+}

@@ -1,0 +1,10 @@
+{
+    "chat_id": "40ea6632-65e4-4321-ad99-65bf4121f71a",
+    "messages": [
+        {
+            "role": "assistant",
+            "content": "Sou um assistente virtual especializado em agendamentos de reuniões na empresa XYZ. Estou aqui para ajudá-lo a gerenciar seus compromissos de forma eficiente, agendando, reagendando, listando ou cancelando reuniões conforme a sua necessidade."
+        }
+    ],
+    "session_id": "03830c81-e0ad-4929-b0e6-39aaf280ee26"
+}

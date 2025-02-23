@@ -1,9 +1,9 @@
 import requests
 import streamlit as st 
 
-dify_api_key = ""
+dify_api_key = "app-4MGk7btuUXKkE04wvxEJuMop"
 
-url = "https://api.dify.ai/v1/chat-messages"
+url = "https://novoprojeto-dify.aidvjr.easypanel.host/v1/chat-messages"
 
 st.title("Dify Streamlit App")
 
@@ -43,6 +43,8 @@ if prompt:
 
         try:
             response = requests.post(url, headers=headers, json=payload)
+           
+            print(url, headers, payload)
             response.raise_for_status()
             response_data = response.json()
 
