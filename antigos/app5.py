@@ -13,9 +13,11 @@ os.makedirs(CHAT_HISTORY_DIR, exist_ok=True)
 
 st.title("Chatbot Streamlit")
 
-# Função para listar todas as conversas salvas
+# Função para listar todas as conversas salvas e ordená-las das mais recentes para as mais antigas
 def list_saved_conversations():
-    return [f.replace(".json", "") for f in os.listdir(CHAT_HISTORY_DIR) if f.endswith(".json")]
+    conversations = [f.replace(".json", "") for f in os.listdir(CHAT_HISTORY_DIR) if f.endswith(".json")]
+    # Ordena as conversas com base na data de modificação do arquivo (do mais recente para o mais antigo)
+    return sorted(conversations, key=lambda x: os.path.getmtime(os.path.join(CHAT_HISTORY_DIR, f"{x}.json")), reverse=True)
 
 # Função para carregar o histórico de conversa com base no ID do chat
 def load_chat_history(chat_id):
@@ -40,29 +42,84 @@ def reset_chat():
     st.session_state.messages = []  # Limpa as mensagens anteriores
     save_chat_history(new_chat_id, [], st.session_state.session_id)  # Cria um novo arquivo para a conversa
 
+# Função para apagar uma conversa
+def delete_chat(chat_id):
+    file_path = os.path.join(CHAT_HISTORY_DIR, f"{chat_id}.json")
+    if os.path.exists(file_path):
+        os.remove(file_path)
+
 # Verifica se o chat_id está presente, caso contrário, inicia uma nova conversa
 if "chat_id" not in st.session_state:
     st.session_state.chat_id = None  # Nenhuma conversa ativa inicialmente
 
-# Lista todas as conversas salvas no sidebar
+# Lista todas as conversas salvas no sidebar, da mais nova para a mais antiga
 st.sidebar.subheader("📜 Históricos de Conversa")
 saved_conversations = list_saved_conversations()
+
+# Variáveis de controle para a exclusão
+delete_chat_id = None
+
+# Adiciona estilo CSS para redimensionar os botões
+st.markdown("""
+    <style>
+        .stButton button {
+            font-size: 12px;
+            padding: 6px 12px;
+        }
+        .stHorizontalBlock{
+              align-items: center;}
+    </style>
+""", unsafe_allow_html=True)
 
 # Botão para iniciar uma nova conversa
 if st.sidebar.button("➕ Nova Conversa"):
     reset_chat()
 
-# Exibe as conversas salvas como uma lista vertical clicável
+# Exibe as conversas salvas como uma lista vertical clicável com a opção de apagar
 for chat_id in saved_conversations:
-    if st.sidebar.button(f"Conversa {chat_id}", key=chat_id):
-        chat_data = load_chat_history(chat_id)
+    col1, col2 = st.sidebar.columns([4, 1])  # Cria duas colunas
+    with col1:
+        if st.button(f"Conversa {chat_id}", key=chat_id):
+            chat_data = load_chat_history(chat_id)
+            st.session_state.chat_id = chat_data["chat_id"]
+            st.session_state.session_id = chat_data["session_id"]
+            st.session_state.messages = chat_data["messages"]
+    with col2:
+        if st.button(f"❌", key=f"delete_{chat_id}"):  # Botão de excluir conversa
+            delete_chat_id = chat_id
+
+# Exibe a tela de confirmação se o botão de exclusão for clicado
+if delete_chat_id:
+    confirm_delete = st.radio(f"Tem certeza que deseja excluir a conversa {delete_chat_id}?", ["Sim", "Não"])
+    if confirm_delete == "Sim":
+        delete_chat(delete_chat_id)
+        st.success(f"A conversa {delete_chat_id} foi excluída com sucesso!")
+        # Recarrega a lista de conversas após a exclusão
+        saved_conversations = list_saved_conversations()
+        # Se houver conversas restantes, carrega a mais recente
+        if saved_conversations:
+            latest_chat_id = saved_conversations[0]
+            chat_data = load_chat_history(latest_chat_id)
+            st.session_state.chat_id = chat_data["chat_id"]
+            st.session_state.session_id = chat_data["session_id"]
+            st.session_state.messages = chat_data["messages"]
+        else:
+            reset_chat()  # Se não houver mais conversas, cria uma nova
+        st.rerun()  # Recarrega a página para refletir as mudanças
+    elif confirm_delete == "Não":
+        delete_chat_id = None  # Cancela a exclusão
+
+# Se não houver conversa ativa, cria uma nova conversa ou carrega a última (a mais recente) se houver
+if not st.session_state.get("chat_id"):
+    if saved_conversations:
+        # Carrega a primeira conversa (a mais recente)
+        latest_chat_id = saved_conversations[0]
+        chat_data = load_chat_history(latest_chat_id)
         st.session_state.chat_id = chat_data["chat_id"]
         st.session_state.session_id = chat_data["session_id"]
         st.session_state.messages = chat_data["messages"]
-
-# Se não houver conversa ativa, cria uma nova conversa
-if not st.session_state.get("chat_id"):
-    reset_chat()
+    else:
+        reset_chat()
 
 # Exibe o chat_id da conversa atual na parte superior da tela
 st.markdown(f"### ID da Conversa: {st.session_state.chat_id}")
