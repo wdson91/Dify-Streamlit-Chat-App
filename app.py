@@ -13,7 +13,13 @@ DB_PATH = "users.db"  # Banco de dados SQLite
 
 # Garante que a pasta de histórico de conversas exista
 os.makedirs(CHAT_HISTORY_DIR, exist_ok=True)
-
+hide_streamlit_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            </style>
+            """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
 # Função para conectar ao banco de dados
 def connect_db():
     conn = sqlite3.connect(DB_PATH)
